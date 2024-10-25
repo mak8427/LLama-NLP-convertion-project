@@ -3,14 +3,16 @@ import torch
 import re
 
 
-# Set up LLaMA model and tokenizer (update model name as appropriate)
-# Load model directly
+# Load the Hugging Face token from token.txt
+with open("token.txt", "r") as token_file:
+    hf_token = token_file.read().strip()
 
-
-tokenizer = AutoTokenizer.from_pretrained("meta-llama/Llama-3.2-1B")
-model = AutoModelForCausalLM.from_pretrained("meta-llama/Llama-3.2-1B")
+# Set up LLaMA model and tokenizer using Hugging Face token
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-model.to(device)
+model_name = "meta-llama/Llama-3.2-1B"
+
+tokenizer = LlamaTokenizer.from_pretrained(model_name, use_auth_token=hf_token)
+model = LlamaForCausalLM.from_pretrained(model_name, use_auth_token=hf_token).to(device)
 
 def read_random_events(file_path):
     with open(file_path, 'r') as file:
@@ -54,8 +56,8 @@ def process_and_save_events(input_file, output_file):
             file.write(event + "\n\n")
 
 # File paths
-input_file = '/mnt/data/RandomEvents.txt'
-output_file = '/mnt/data/AdaptedEvents.txt'
+input_file = 'RandomEvents.txt'
+output_file = 'AdaptedEvents.txt'
 
 # Process events and save
 process_and_save_events(input_file, output_file)
