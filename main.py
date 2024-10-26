@@ -14,7 +14,7 @@ if not torch.cuda.is_available():
     raise EnvironmentError("CUDA GPU is required to run this script.")
 
 device = torch.device("cuda")
-model_name = "meta-llama/Llama-3.2-1B"
+model_name = "llmware/bling-1b-0.1"
 
 tokenizer = AutoTokenizer.from_pretrained(model_name)
 model = AutoModelForCausalLM.from_pretrained(model_name).to(device)
@@ -38,7 +38,7 @@ def parse_events(lines):
 
 def llama_generate(prompt):
     inputs = tokenizer(prompt, return_tensors="pt").to(device)
-    output = model.generate(**inputs, max_new_tokens=400)
+    output = model.generate(**inputs, max_new_tokens=200)
     return tokenizer.decode(output[0], skip_special_tokens=True)
 
 def convert_event_with_llama(event_lines):
@@ -529,7 +529,7 @@ option_end
 """
 
 
-    prompt = f"Look at those templates:  {example}  \n Those are the possible outcomes:{outcomes} \n Those are the possible triggers: {effects} \n Convert the following event according to the given triggers and effects, adapting it as closely as possible:\n\n{event_str}\n\nAdapted Event:\n"
+    prompt = f" Make another similar event using those possible triggers and effect: {effects} {outcomes} WITH THIS EXAMPLE:{example} Create a new  economic event:  id=q_04"
     generated_event = llama_generate(prompt)
     return generated_event
 
